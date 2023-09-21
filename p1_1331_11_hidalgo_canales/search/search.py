@@ -16,9 +16,9 @@
 In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 
-Name student 1: ...
-Name student 2: ...
-IA lab group and pair: gggg - mm
+Name student 1: Sergio Hidalgo Gamborino
+Name student 2: Alexis Canales Molina
+IA lab group and pair: 1331 - 11
 
 """
 
@@ -88,13 +88,68 @@ def depthFirstSearch(search_problem):
 
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
-
-    print("Start:", search_problem.getStartState())
-    print("Is the start a goal?", search_problem.isGoalState(search_problem.getStartState()))
-    print("Start's successors:", search_problem.getSuccessors(search_problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from util import Stack
+    from game import Directions
+
+    # stack of sucessors
+    st : Stack = Stack()
+    # stack to get back
+    back_st : Stack = Stack()
+    # list of already visited
+    allready_visited : list = list()
+    # list of moves
+    moves : list = list()
+    # actual state (coordinates)
+    actual_state = search_problem.getStartState()
+    
+    # sucessors -> coord[0], card[1], cost[2]
+
+    # while isnt the final goal
+    while not search_problem.isGoalState(actual_state):
+        # the actual sucessors will be updated with the actual state
+        actual_sucessors = search_problem.getSuccessors(actual_state)
+        # flag to determine whether or not
+        # it needs to turn back
+        flag = 0
+        for i in actual_sucessors:
+            # if its not visited it will be pushed
+            if i[0] not in allready_visited:
+               st.push(i)
+               # and it will continue his path
+               flag += 1
+
+        # the next state to check
+        temp_state = st.pop()
+
+        # if flag == 0 there is no viable path
+        # (all the paths have been visited)
+        if flag == 0:
+            # back_state its the previous state
+            back_state = back_st.pop()
+            # get the sucessors frome it
+            back_sucessors = search_problem.getSuccessors(back_state[0])
+
+            # then check if the temp_state its among them
+            # while it isnt
+            while temp_state not in back_sucessors:
+                # it appends the reverse of the back_state direction
+                moves.append(Directions.REVERSE[back_state[1]])
+                # turning pacman over his steps
+                back_state = back_st.pop()
+                back_sucessors = search_problem.getSuccessors(back_state[0])
+
+        # append move of the state to list
+        moves.append(temp_state[1])
+        # push state to back stack
+        back_st.push(temp_state)
+        # gets the coordinates of the step
+        actual_state = temp_state[0]
+        # append it to allready visited
+        allready_visited.append(actual_state)
+    
+    #import pdb;pdb.set_trace()
+    return moves
 
 
 def breadthFirstSearch(search_problem):
