@@ -102,6 +102,7 @@ def depthFirstSearch(search_problem):
     moves : list = list()
     # actual state (coordinates)
     actual_state = search_problem.getStartState()
+    allready_visited.append(actual_state)
     
     # sucessors -> coord[0], card[1], cost[2]
 
@@ -129,14 +130,15 @@ def depthFirstSearch(search_problem):
             back_state = back_st.pop()
             # get the sucessors frome it
             back_sucessors = search_problem.getSuccessors(back_state[0])
-
             # then check if the temp_state its among them
             # while it isnt
-            while temp_state not in back_sucessors:
+            while temp_state not in back_sucessors :
                 # it appends the reverse of the back_state direction
                 moves.append(Directions.REVERSE[back_state[1]])
                 # turning pacman over his steps
-                back_state = back_st.pop()
+                if back_st.isEmpty():
+                    break
+                back_state = back_st.pop()    
                 back_sucessors = search_problem.getSuccessors(back_state[0])
 
         # append move of the state to list
