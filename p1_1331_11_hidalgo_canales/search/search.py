@@ -96,36 +96,31 @@ def depthFirstSearch(search_problem):
     # list of path
     path_trace : list = list()
     # list of already visited
-    allready_visited : list = list()
+    already_visited : list = list()
     # actual state (coordinates)
     actual_state = search_problem.getStartState()
     # temporal dictionary
     temp_dic = dict()
     temp_dic["path"]=list()
-    temp_dic["cost"]=int()
-    # cost of path
-    cost = 0
+
     # sucessors -> coord[0], card[1], cost[2]
-    allready_visited.append(actual_state)
+    already_visited.append(actual_state)
+    
     # while the actual state is not the goal state
     while not search_problem.isGoalState(actual_state):
         # the actual sucessors will be updated with the actual state
         actual_sucessors = search_problem.getSuccessors(actual_state)
         for i in actual_sucessors:
-            if i[0] not in allready_visited:
+            if i[0] not in already_visited:
                 # if its not visited it will be pushed
-                # with all the data of the path and its cost
+                # with all the data of the path
                 path_trace = temp_dic["path"].copy()   
                 path_trace.append(i[1])
-                cost = temp_dic["cost"]
-                cost+=i[2]
-                st.push({"node":i, "path":path_trace, "cost":cost})
-
+                st.push({"node":i, "path":path_trace})
         # the next state to check
         temp_dic = st.pop()
-
         # append it to allready visited
-        allready_visited.append(temp_dic["node"][0])
+        already_visited.append(temp_dic["node"][0])
         # keep the actual state and the path
         actual_state = temp_dic["node"][0]
         path_trace = temp_dic["path"]
@@ -139,41 +134,36 @@ def breadthFirstSearch(search_problem):
     from util import Queue
     
     # queue of sucessors
-    st : Queue = Queue()
+    q : Queue = Queue()
     # list of path
     path_trace : list = list()
     # list of already visited
-    allready_visited : list = list()
+    already_visited : list = list()
     # actual state (coordinates)
     actual_state = search_problem.getStartState()
     # temporal dictionary
     temp_dic = dict()
-    temp_dic["path"]=list()
-    temp_dic["cost"]=int()
-    # cost of path
-    cost = 0
+    temp_dic["path"] = list()
     
     # sucessors -> coord[0], card[1], cost[2]
-    allready_visited.append(actual_state)
+    already_visited.append(actual_state)
     
+    # while the actual state is not the goal state
     while not search_problem.isGoalState(actual_state):
 
         # the actual sucessors will be updated with the actual state
         actual_sucessors = search_problem.getSuccessors(actual_state)
         for i in actual_sucessors:
-            if i[0] not in allready_visited:
+            if i[0] not in already_visited:
                 # if its not visited it will be pushed
-                # with all the data of the path and its cost
+                # with all the data of the path
                 path_trace = temp_dic["path"].copy()   
                 path_trace.append(i[1])
-                cost = temp_dic["cost"]
-                cost+=i[2]
-                st.push({"node":i, "path":path_trace, "cost":cost})
+                q.push({"node":i, "path":path_trace})
         # the next state to check
-        temp_dic = st.pop()
-        
+        temp_dic = q.pop()
         # append it to allready visited
-        allready_visited.append(temp_dic["node"][0])
+        already_visited.append(temp_dic["node"][0])
         # keep the actual state and the path
         actual_state = temp_dic["node"][0]
         path_trace = temp_dic["path"]
@@ -182,9 +172,48 @@ def breadthFirstSearch(search_problem):
 
 def uniformCostSearch(search_problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from util import PriorityQueue
+    # queue of sucessors
+    pq : PriorityQueue = PriorityQueue()
+    # list of path
+    path_trace : list = list()
+    # list of already visited
+    already_visited : list = list()
+    # actual state (coordinates)
+    actual_state = search_problem.getStartState()
+    # temporal dictionary
+    temp_dic = dict()
+    temp_dic["path"] = list()
+    temp_dic["cost"] = int()
+    # cost
+    cost = 0 
+    
+    # sucessors -> coord[0], card[1], cost[2]
+    already_visited.append(actual_state)
 
+    # while the actual state is not the goal state
+    while not search_problem.isGoalState(actual_state):
+        # the actual sucessors will be updated with the actual state
+        actual_sucessors = search_problem.getSuccessors(actual_state)
+        for i in actual_sucessors:
+            if i[0] not in already_visited:
+                # if its not visited it will be pushed
+                # with all the data of the path and cost
+                path_trace = temp_dic["path"].copy()   
+                path_trace.append(i[1])
+                cost = temp_dic["cost"]
+                cost+=i[2]
+                pq.push({"node":i, "path":path_trace, "cost": cost}, cost)
+        # the next state to check
+        temp_dic = pq.pop()
+        # append it to allready visited
+        already_visited.append(temp_dic["node"][0])
+        # keep the actual state and the path
+        actual_state = temp_dic["node"][0]
+        path_trace = temp_dic["path"]
+
+    return path_trace
+        
 
 def nullHeuristic(state, search_problem=None):
     """
