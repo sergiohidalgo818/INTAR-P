@@ -90,68 +90,67 @@ def depthFirstSearch(search_problem):
     understand the search problem that is being passed in:
     """
     from util import Stack
-    from game import Directions
-
+    
     # stack of sucessors
     st : Stack = Stack()
-    # stack to get back
-    back_st : Stack = Stack()
+    # list of path
+    path_trace : list = list()
     # list of already visited
     allready_visited : list = list()
-    # list of moves
-    moves : list = list()
     # actual state (coordinates)
     actual_state = search_problem.getStartState()
-    allready_visited.append(actual_state)
+    # temporal dictionary
+    temp_dic = dict()
+    temp_dic["path"]=list()
+    temp_dic["cost"]=int()
+    # cost of path
+    cost = 0
+    # list of posible responses
+    responses = list()
     
     # sucessors -> coord[0], card[1], cost[2]
-
-    # while isnt the final goal
-    while not search_problem.isGoalState(actual_state):
+    allready_visited.append(actual_state)
+    st.push(0)
+    # while 1
+    while 1:
         # the actual sucessors will be updated with the actual state
         actual_sucessors = search_problem.getSuccessors(actual_state)
-        # flag to determine whether or not
-        # it needs to turn back
-        flag = 0
         for i in actual_sucessors:
-            # if its not visited it will be pushed
             if i[0] not in allready_visited:
-               st.push(i)
-               # and it will continue his path
-               flag += 1
+                # if its not visited it will be pushed
+                # with all the data of the path and its cost
+                path_trace = temp_dic["path"].copy()   
+                path_trace.append(i[1])
+                cost = temp_dic["cost"]
+                cost+=i[2]
+                st.push({"node":i, "path":path_trace, "cost":cost})
+
 
         # the next state to check
-        temp_state = st.pop()
-
-        # if flag == 0 there is no viable path
-        # (all the paths have been visited)
-        if flag == 0:
-            # back_state its the previous state
-            back_state = back_st.pop()
-            # get the sucessors frome it
-            back_sucessors = search_problem.getSuccessors(back_state[0])
-            # then check if the temp_state its among them
-            # while it isnt
-            while temp_state not in back_sucessors :
-                # it appends the reverse of the back_state direction
-                moves.append(Directions.REVERSE[back_state[1]])
-                # turning pacman over his steps
-                if back_st.isEmpty():
-                    break
-                back_state = back_st.pop()    
-                back_sucessors = search_problem.getSuccessors(back_state[0])
-
-        # append move of the state to list
-        moves.append(temp_state[1])
-        # push state to back stack
-        back_st.push(temp_state)
-        # gets the coordinates of the step
-        actual_state = temp_state[0]
+        temp_dic = st.pop()
+        # if it equals to 0 its the end of the stack
+        if temp_dic == 0:
+            break
         # append it to allready visited
-        allready_visited.append(actual_state)
-    
-    #import pdb;pdb.set_trace()
-    return moves
+        allready_visited.append(temp_dic["node"][0])
+        # keep the actual state and the path
+        actual_state = temp_dic["node"][0]
+        path_trace = temp_dic["path"]
+
+        # if its a goal state its appended to the responses
+        if search_problem.isGoalState(actual_state):
+            responses.append(temp_dic)
+
+    # the cost will be equal to the first path cost
+    cost = responses[0]['cost']
+    for i in responses:
+        # if the cost of the i response is minus or equal
+        if i['cost'] <= cost:
+            cost = i['cost']
+            # it will become the new path
+            path_trace = i['path']
+
+    return path_trace
 
 
 def breadthFirstSearch(search_problem):

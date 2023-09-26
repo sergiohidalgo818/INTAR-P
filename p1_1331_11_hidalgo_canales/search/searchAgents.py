@@ -28,9 +28,9 @@ that say
 
 "*** YOUR CODE HERE ***"
 
-Name student 1: Sergio Hidalgo Gamborino
-Name student 2: Alexis Canales Molina
-IA lab group and pair: 1331 - 11
+Name student 1: ...
+Name student 2: ...
+IA lab group and pair: gggg - mm
 
 
 The parts you fill in start about 3/4 of the way down.  Follow the project
