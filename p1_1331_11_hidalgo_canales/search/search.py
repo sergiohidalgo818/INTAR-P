@@ -141,16 +141,16 @@ def depthFirstSearch(search_problem):
         if search_problem.isGoalState(actual_state):
             responses.append(temp_dic)
 
-    # the cost will be equal to the first path cost
-    cost = responses[0]['cost']
-    for i in responses:
-        # if the cost of the i response is minus or equal
-        if i['cost'] <= cost:
-            cost = i['cost']
-            # it will become the new path
-            path_trace = i['path']
+    # # the cost will be equal to the first path cost
+    # cost = responses[0]['cost']
+    # for i in responses:
+    #     # if the cost of the i response is minus or equal
+    #     if i['cost'] <= cost:
+    #         cost = i['cost']
+    #         # it will become the new path
+    #         path_trace = i['path']
 
-    return path_trace
+    return responses[0]['path']
 
 
 def breadthFirstSearch(search_problem):
