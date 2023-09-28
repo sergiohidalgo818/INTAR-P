@@ -204,7 +204,6 @@ def uniformCostSearch(search_problem):
     # temporal dictionary
     temp_dic = dict()
     temp_dic["path"] = list()
-    temp_dic["cost"] = int(0)
     # cost
     cost = 0 
 
@@ -223,9 +222,8 @@ def uniformCostSearch(search_problem):
                 # with all the data of the path and cost
                 path_trace = temp_dic["path"].copy()   
                 path_trace.append(sucessor[1])
-                cost = temp_dic["cost"]
-                cost += sucessor[2]
-                pq.push({"node":sucessor, "path":path_trace, "cost": cost}, cost)
+                cost = (search_problem.getCostOfActions(path_trace))
+                pq.push({"node":sucessor, "path":path_trace}, cost)
         # if its empty there is no solution
         if pq.isEmpty():
             return None
@@ -263,68 +261,120 @@ def aStarSearch(search_problem, heuristic=nullHeuristic):
     path_trace : list = list()
     # list of already visited
     already_visited : list = list()
-    # list of already visited cost
-    already_visited_cost : list = list()
     # actual state (coordinates)
     actual_state = search_problem.getStartState()
     # temporal dictionary
     temp_dic = dict()
     temp_dic["path"] = list()
-    temp_dic["cost"] = int(0)
-    temp_dic["realcost"] = int(0)
     # cost
     cost = 0 
-    realcost = 0 
-    # list that will keep solutions
-    solutions = list()
-    
+
     # sucessors -> coord[0], card[1], cost[2]
     already_visited.append(actual_state)
 
     # while the actual state is not the goal state
-    while 1:
+    # import pdb;pdb.set_trace()
+    while not search_problem.isGoalState(actual_state):
         # the actual sucessors will be updated with the actual state
+        # print ("current node:", actual_state)
         actual_sucessors = search_problem.getSuccessors(actual_state)
-        for i in actual_sucessors:
-            # if its already visited but has lest cost, it gets selected
-            if i[0] not in already_visited or (i[2]
-                                                < already_visited_cost
-                                                [already_visited.index(i[0])]):
-                # it get replaced in case that its already visited
-                if i[0] in already_visited:
-                    already_visited_cost[already_visited.index(i[0])] = i[2]
-                # if its not visited it will be pushed
+        for sucessor in actual_sucessors:
+            # if its not visited it will be pushed
+            if sucessor[0] not in already_visited: # or sucessor[0] not in already_generated:
                 # with all the data of the path and cost
                 path_trace = temp_dic["path"].copy()   
-                path_trace.append(i[1])
-                realcost = temp_dic['realcost']
-                realcost += i[2]
-                cost = temp_dic["cost"]
-                cost += (heuristic(i[0], search_problem) + realcost)
-                pq.push({"node":i, "path":path_trace, "cost": cost, "realcost": realcost}, cost)
-        # the next state to check
-        temp_dic = pq.pop()
-        # append it to allready visited
-        already_visited.append(temp_dic["node"][0])
-        already_visited_cost.append(temp_dic["node"][2])
-        # keep the actual state and the path
-        actual_state = temp_dic["node"][0]
+                path_trace.append(sucessor[1])
+                cost = (search_problem.getCostOfActions(path_trace) + 
+                        heuristic(sucessor[0], search_problem))
+                pq.push({"node":sucessor, "path":path_trace}, cost)
+        # if its empty there is no solution
+        if pq.isEmpty():
+            return None
+
+        # do while
+        while True and not pq.isEmpty():
+            # the next state to check
+            temp_dic = pq.pop()
+            # keep the actual state and the path
+            actual_state = temp_dic["node"][0]
+            # if its in already visited continue
+            if actual_state not in already_visited: 
+                break
+
+        # append it to already visited
+        already_visited.append(actual_state)
         path_trace = temp_dic["path"]
-
-        if search_problem.isGoalState(actual_state):
-            solutions.append(temp_dic)
-
-        if pq.isEmpty() and len(solutions) > 0:
-            break
-        
-    cost = int(solutions[0]['cost'])
-    
-    for i in solutions:
-        if int(i['cost']) <= cost:
-            cost = int(i['cost'])
-            path_trace = i['path']
-
+            
     return path_trace
+    # from util import PriorityQueue
+    # # queue of sucessors
+    # pq : PriorityQueue = PriorityQueue()
+    # # list of path
+    # path_trace : list = list()
+    # # list of already visited
+    # already_visited : list = list()
+    # # list of already visited cost
+    # already_visited_cost : list = list()
+    # # actual state (coordinates)
+    # actual_state = search_problem.getStartState()
+    # # temporal dictionary
+    # temp_dic = dict()
+    # temp_dic["path"] = list()
+    # temp_dic["cost"] = int(0)
+    # temp_dic["realcost"] = int(0)
+    # # cost
+    # cost = 0 
+    # realcost = 0 
+    # # list that will keep solutions
+    # solutions = list()
+    
+    # # sucessors -> coord[0], card[1], cost[2]
+    # already_visited.append(actual_state)
+
+    # # while the actual state is not the goal state
+    # while 1:
+    #     # the actual sucessors will be updated with the actual state
+    #     actual_sucessors = search_problem.getSuccessors(actual_state)
+    #     for i in actual_sucessors:
+    #         # if its already visited but has lest cost, it gets selected
+    #         if i[0] not in already_visited or (i[2]
+    #                                             < already_visited_cost
+    #                                             [already_visited.index(i[0])]):
+    #             # it get replaced in case that its already visited
+    #             if i[0] in already_visited:
+    #                 already_visited_cost[already_visited.index(i[0])] = i[2]
+    #             # if its not visited it will be pushed
+    #             # with all the data of the path and cost
+    #             path_trace = temp_dic["path"].copy()   
+    #             path_trace.append(i[1])
+    #             realcost = temp_dic['realcost']
+    #             realcost += i[2]
+    #             cost = temp_dic["cost"]
+    #             cost += (heuristic(i[0], search_problem) + realcost)
+    #             pq.push({"node":i, "path":path_trace, "cost": cost, "realcost": realcost}, cost)
+    #     # the next state to check
+    #     temp_dic = pq.pop()
+    #     # append it to allready visited
+    #     already_visited.append(temp_dic["node"][0])
+    #     already_visited_cost.append(temp_dic["node"][2])
+    #     # keep the actual state and the path
+    #     actual_state = temp_dic["node"][0]
+    #     path_trace = temp_dic["path"]
+
+    #     if search_problem.isGoalState(actual_state):
+    #         solutions.append(temp_dic)
+
+    #     if pq.isEmpty() and len(solutions) > 0:
+    #         break
+        
+    # cost = int(solutions[0]['cost'])
+    
+    # for i in solutions:
+    #     if int(i['cost']) <= cost:
+    #         cost = int(i['cost'])
+    #         path_trace = i['path']
+
+    # return path_trace
 
 
 # Abbreviations
