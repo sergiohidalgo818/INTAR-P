@@ -218,10 +218,11 @@ def uniformCostSearch(search_problem):
         actual_sucessors = search_problem.getSuccessors(actual_state)
         for sucessor in actual_sucessors:
             # if its not visited it will be pushed
-            if sucessor[0] not in already_visited: # or sucessor[0] not in already_generated:
+            if sucessor[0] not in already_visited:
                 # with all the data of the path and cost
                 path_trace = temp_dic["path"].copy()   
                 path_trace.append(sucessor[1])
+                # cost equals cost of actions
                 cost = (search_problem.getCostOfActions(path_trace))
                 pq.push({"node":sucessor, "path":path_trace}, cost)
         # if its empty there is no solution
@@ -280,10 +281,11 @@ def aStarSearch(search_problem, heuristic=nullHeuristic):
         actual_sucessors = search_problem.getSuccessors(actual_state)
         for sucessor in actual_sucessors:
             # if its not visited it will be pushed
-            if sucessor[0] not in already_visited: # or sucessor[0] not in already_generated:
+            if sucessor[0] not in already_visited:
                 # with all the data of the path and cost
                 path_trace = temp_dic["path"].copy()   
                 path_trace.append(sucessor[1])
+                # cost equals cost of actions + heuristic
                 cost = (search_problem.getCostOfActions(path_trace) + 
                         heuristic(sucessor[0], search_problem))
                 pq.push({"node":sucessor, "path":path_trace}, cost)
