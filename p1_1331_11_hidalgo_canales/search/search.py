@@ -117,9 +117,10 @@ def depthFirstSearch(search_problem):
                 path_trace = temp_dic["path"].copy()   
                 path_trace.append(i[1])
                 st.push({"node":i, "path":path_trace})
-        # the next state to check
+        # if its empty there is no solution
         if st.isEmpty():
-            break
+            return None
+        # the next state to check
         temp_dic = st.pop()
         # append it to allready visited
         already_visited.append(temp_dic["node"][0])
@@ -162,12 +163,14 @@ def breadthFirstSearch(search_problem):
                 path_trace = temp_dic["path"].copy()   
                 path_trace.append(i[1])
                 q.push({"node":i, "path":path_trace})
-        # the next state to check
+                # append it to allready visited
+                already_visited.append(i[0])
+
+        # if its empty there is no solution
         if q.isEmpty():
-            break
+            return None
+        # the next state to check
         temp_dic = q.pop()
-        # append it to allready visited
-        already_visited.append(temp_dic["node"][0])
         # keep the actual state and the path
         actual_state = temp_dic["node"][0]
         path_trace = temp_dic["path"]
