@@ -141,6 +141,7 @@ def depthFirstSearch(search_problem):
 def breadthFirstSearch(search_problem):
     """Search the shallowest nodes in the search tree first."""
     from util import Queue
+    from game import Directions
     
     # queue of sucessors
     q : Queue = Queue()
@@ -188,7 +189,10 @@ def breadthFirstSearch(search_problem):
         already_visited.append(actual_state)
         path_trace = temp_dic["path"]
 
-    return path_trace
+    # for i in reversed(path_trace):
+    #     path_trace.append(Directions.REVERSE[i])
+
+    return path_trace 
 
 def uniformCostSearch(search_problem):
     """Search the node of least total cost first."""
