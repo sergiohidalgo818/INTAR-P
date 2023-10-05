@@ -158,9 +158,13 @@ def breadthFirstSearch(search_problem):
     # sucessors -> coord[0], card[1], cost[2]
     already_visited.append(actual_state)
     
+    solution = list()
+    flag = 0
+    if hasattr(search_problem, "corners"):
+        flag=1
+    
     # while the actual state is not the goal state
     while not search_problem.isGoalState(actual_state):
-
         # the actual sucessors will be updated with the actual state
         actual_sucessors = search_problem.getSuccessors(actual_state)
         for i in actual_sucessors:
@@ -174,6 +178,9 @@ def breadthFirstSearch(search_problem):
         # if its empty there is no solution
         if q.isEmpty():
             return None
+        
+        if hasattr(object, "corners"):
+            print("kmsdfnk")
 
         # do while
         while True and not q.isEmpty():
@@ -189,10 +196,20 @@ def breadthFirstSearch(search_problem):
         already_visited.append(actual_state)
         path_trace = temp_dic["path"]
 
-    # for i in reversed(path_trace):
-    #     path_trace.append(Directions.REVERSE[i])
+        if flag == 1 and actual_state in search_problem.corners:
+            for i in reversed(path_trace):
+                path_trace.append(Directions.REVERSE[i])
+            
+            solution.append(path_trace.copy())
 
-    return path_trace 
+    if flag == 1:
+        path_trace.clear()   
+        for group in range(len(solution)):
+            for step in solution[group]:
+                path_trace.append(step)
+
+    
+    return path_trace
 
 def uniformCostSearch(search_problem):
     """Search the node of least total cost first."""
