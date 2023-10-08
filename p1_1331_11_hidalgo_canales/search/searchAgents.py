@@ -297,7 +297,9 @@ class CornersProblem(search.SearchProblem):
         Stores the walls, pacman's starting position and corners.
         """
         self.walls = startingGameState.getWalls()
-        self.startingPosition = startingGameState.getPacmanPosition()
+        # Has also the visited corners (so when it goes to a corner
+        # it will be concived as a diferent state by the strategy)
+        self.startingPosition = (startingGameState.getPacmanPosition(), list())
         top, right = self.walls.height-2, self.walls.width-2
         self.corners = ((1, 1), (1, top), (right, 1), (right, top))
         for corner in self.corners:
@@ -312,6 +314,8 @@ class CornersProblem(search.SearchProblem):
         # For display purposes
         self._visited, self._visitedlist, self._expanded = {}, [], 0  # DO NOT CHANGE
 
+        self.cornersvisited = list()
+
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
@@ -324,24 +328,27 @@ class CornersProblem(search.SearchProblem):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        for i in self.corners:
-            if i == state:
-                self.done+=1
-
-        if len(self.corners) == self.done:
+        isGoal = False
+        cont = 0
+        # it will check who many corners have been visited
+        for i in state[1]:
+            if i in self.corners:
+                cont+=1
+        # if all corners are visited it means its goal
+        if cont == (len(self.corners)):
             isGoal = True
-        else:
-            isGoal = False
-        # For display purposes only
+
+
+        # For display purposes only (this was copied from function on line 182)
         if isGoal and self.visualize:
-            self._visitedlist.append(state)
+            self._visitedlist.append(state[0])
             import __main__
             if '_display' in dir(__main__):
                 if 'drawExpandedCells' in dir(__main__._display):  # @UndefinedVariable
                     __main__._display.drawExpandedCells(self._visitedlist)  # @UndefinedVariable
 
         return isGoal
-
+    
     def getSuccessors(self, received_state):
         """
         Returns successor states, the actions they require, and a cost of 1.
@@ -352,7 +359,6 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
@@ -361,23 +367,37 @@ class CornersProblem(search.SearchProblem):
             #   dx, dy = Actions.directionToVector(action)
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
-            x, y = received_state
+            x, y = received_state[0]
             dx, dy = Actions.directionToVector(action)
 
-            if received_state in self.corners:
-                pass
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
                 nextState = (nextx, nexty)
+                
+                # this is the main diference from function on line 195
+                # the state has now a list of the visited corners
+                visitedcorners=received_state[1].copy()
+
+                # so when its a corner
+                if nextState in self.corners:
+                    # and its not on the list
+                    if nextState not in visitedcorners:
+                        # it will be added
+                        visitedcorners.append(nextState)
+                
                 cost = self.costFn(nextState)
 
-                successors.append((nextState, action, cost))
+                # and then gived back to the search function
+                successors.append(((nextState, visitedcorners), action, cost))
+                # this means that it will be a "diferent state" for the search fn
+                # so it will be possible to turn back 
 
+        # this part was copied from fn on line 195
         # Bookkeeping for display purposes
         self._expanded += 1  # DO NOT CHANGE
-        if received_state not in self._visited:
-            self._visited[received_state] = True
-            self._visitedlist.append(received_state)
+        if received_state[0] not in self._visited:
+            self._visited[received_state[0]] = True
+            self._visitedlist.append(received_state[0])
 
         return successors
 
@@ -388,7 +408,7 @@ class CornersProblem(search.SearchProblem):
         """
         if action_seq == None:
             return 999999
-        x, y = self.startingPosition
+        x, y = self.startingPosition[0]
         for action in action_seq:
             dx, dy = Actions.directionToVector(action)
             x, y = int(x + dx), int(y + dy)
