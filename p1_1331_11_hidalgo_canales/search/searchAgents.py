@@ -430,11 +430,109 @@ def cornersHeuristic(cur_state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
+    import math
+
+    def calculateDistance(vectorA, vectorB):
+        Ax, Ay = vectorA
+        Bx, By = vectorB
+
+        if Ax == Bx:
+            return Ay
+        if Ay == By:
+            return Ax
+
+        vectorAB = (Ax-Bx, Ay-By)
+        
+        ABx, ABy = vectorAB
+
+        module = math.sqrt(ABx**2 + ABy**2)
+
+        if Ax != Bx and Ay != By:
+            return module *2
+
+        return module
+
+    def calculateWalls(walls, state, corner):
+        sx, sy = state
+        cx, cy = corner
+        cont = 0
+
+        if sx == cx:
+            for i in walls[sx]:
+                if i == True:
+                    cont+=3
+        elif sy == cy:
+            for i in walls[sy]:
+                if i == True:
+                    cont+=3
+        else:
+            for i in range(len(walls[sy])):
+                for j in range(len(walls[cy])):
+                    pass
+        return cont
+            
+
+
+
     corners = problem.corners  # These are the corner coordinates
     walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
-    return 0  # Default to trivial solution
+    # cur_state = state, list of corners
+
+    # for each wall it will be consider as 3 of cost
+    # as is the minimum needed to avoid it
+    # one down one to the direction, one up
+    # Example:
+    #  ____   _____
+    #  __  |_|  ___
+    #    |_____|
+
+    # so the relaxed problem will be consider as 
+    # a straight line to the corner and for each wall
+    # it will add 3 of cost
+    
+    state = cur_state[0]
+    visited_corners = cur_state[1]
+
+    not_visited_corners = list()
+    self_to_corners = list()
+    corners_to_corners = list()
+
+    paths = list()
+
+    for i in corners:
+        if i not in visited_corners:
+            not_visited_corners.append(i)
+
+
+    for i in not_visited_corners:
+        self_to_corners.append(util.manhattanDistance(state, i))
+        
+    for i in range(len(not_visited_corners)):
+        for j in not_visited_corners:
+            if not_visited_corners[i] != j:
+                if i == len(corners_to_corners):
+                    corners_to_corners.append(list())
+
+                corners_to_corners[i].append(util.manhattanDistance(not_visited_corners[i], j))
+
+    for j in range(len(corners_to_corners)-1):
+        for i in range(len(self_to_corners)):
+            if i == len(paths):
+                paths.append(self_to_corners[i] + calculateWalls(walls, state, not_visited_corners[i]))
+            
+            paths[i] += corners_to_corners[i][j] + calculateWalls(walls, not_visited_corners[j], not_visited_corners[j+1])
+    
+    if len(paths) == 0:
+        cost = 0            
+    else:
+        cost = paths[0]
+        for i in range(len(paths)):
+            
+            if paths[i] < cost:
+                cost = paths[i]
+
+    return cost
 
 
 class AStarCornersAgent(SearchAgent):
