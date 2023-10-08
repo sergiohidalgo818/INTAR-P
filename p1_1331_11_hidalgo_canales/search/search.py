@@ -161,12 +161,13 @@ def breadthFirstSearch(search_problem):
     solution = list()
     flag = 0
     if hasattr(search_problem, "corners"):
-        flag=1
+        flag=0
     
     # while the actual state is not the goal state
     while not search_problem.isGoalState(actual_state):
         # the actual sucessors will be updated with the actual state
         actual_sucessors = search_problem.getSuccessors(actual_state)
+
         for i in actual_sucessors:
             if i[0] not in already_visited:
                 # if its not visited it will be pushed
