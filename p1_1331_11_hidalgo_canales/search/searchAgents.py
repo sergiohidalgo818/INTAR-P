@@ -465,10 +465,7 @@ def cornersHeuristic(cur_state, problem):
             for i in walls[sy]:
                 if i == True:
                     cont+=3
-        else:
-            for i in range(len(walls[sy])):
-                for j in range(len(walls[cy])):
-                    pass
+
         return cont
             
 
@@ -500,29 +497,26 @@ def cornersHeuristic(cur_state, problem):
 
     paths = list()
 
+    
+
     for i in corners:
         if i not in visited_corners:
             not_visited_corners.append(i)
+            paths.append(float())
+
+    #for i in 
 
 
-    for i in not_visited_corners:
-        self_to_corners.append(util.manhattanDistance(state, i))
+    # for i in range(len(not_visited_corners)):
+    #     for j in range(len(not_visited_corners)-1):
+    #         if not_visited_corners[i] == j:
+    #             paths[i]+=util.manhattanDistance(state, j)
+    #             paths[i]+calculateWalls(walls, state, j)
+    #         else:
+    #             paths[i]+=util.manhattanDistance(not_visited_corners[j], not_visited_corners[j+1])
+    #             paths[i]+calculateWalls(walls, not_visited_corners[j], not_visited_corners[j+1])
         
-    for i in range(len(not_visited_corners)):
-        for j in not_visited_corners:
-            if not_visited_corners[i] != j:
-                if i == len(corners_to_corners):
-                    corners_to_corners.append(list())
-
-                corners_to_corners[i].append(util.manhattanDistance(not_visited_corners[i], j))
-
-    for j in range(len(corners_to_corners)-1):
-        for i in range(len(self_to_corners)):
-            if i == len(paths):
-                paths.append(self_to_corners[i] + calculateWalls(walls, state, not_visited_corners[i]))
-            
-            paths[i] += corners_to_corners[i][j] + calculateWalls(walls, not_visited_corners[j], not_visited_corners[j+1])
-    
+ 
     if len(paths) == 0:
         cost = 0            
     else:
@@ -531,7 +525,7 @@ def cornersHeuristic(cur_state, problem):
             
             if paths[i] < cost:
                 cost = paths[i]
-
+    
     return cost
 
 
