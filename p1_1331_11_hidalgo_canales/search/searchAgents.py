@@ -431,6 +431,7 @@ def cornersHeuristic(cur_state, problem):
     admissible (as well as consistent).
     """
     import math
+    import itertools
 
     def calculateDistance(vectorA, vectorB):
         Ax, Ay = vectorA
@@ -496,37 +497,48 @@ def cornersHeuristic(cur_state, problem):
     corners_to_corners = list()
 
     paths = list()
+    cost = 0
 
-    
+    combinations = list()
 
+    j=0
     for i in corners:
         if i not in visited_corners:
             not_visited_corners.append(i)
-            paths.append(float())
-
-    #for i in 
 
 
-    # for i in range(len(not_visited_corners)):
-    #     for j in range(len(not_visited_corners)-1):
-    #         if not_visited_corners[i] == j:
-    #             paths[i]+=util.manhattanDistance(state, j)
-    #             paths[i]+calculateWalls(walls, state, j)
-    #         else:
-    #             paths[i]+=util.manhattanDistance(not_visited_corners[j], not_visited_corners[j+1])
-    #             paths[i]+calculateWalls(walls, not_visited_corners[j], not_visited_corners[j+1])
-        
- 
-    if len(paths) == 0:
-        cost = 0            
-    else:
-        cost = paths[0]
+    perm = list(itertools.permutations(not_visited_corners))
+
+
+    
+
+    for i in range(len(perm)):
+        combinations.append(list())
+        combinations[i].append(state)
+        for j in perm:
+            combinations[i].append(j)
+
+    for i in range(len(perm)):
+        paths.append(0)
+        for j in range(len(perm[i])-1):
+            if j==0:
+                paths[i]+= int(util.manhattanDistance(state, perm[i][j]))
+                                
+            paths[i]+= int(util.manhattanDistance(perm[i][j], perm[i][j+1]))
+
+     
+    cost = 0            
+    if len(paths) != 0:
         for i in range(len(paths)):
-            
-            if paths[i] < cost:
-                cost = paths[i]
+            cost+=paths[i]
+           
+    cost = cost/len(paths)
+    # -------------------------------------------------------------------------
+
     
     return cost
+
+    
 
 
 class AStarCornersAgent(SearchAgent):
