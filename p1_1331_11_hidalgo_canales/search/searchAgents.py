@@ -453,7 +453,7 @@ def cornersHeuristic(cur_state, problem):
 
         return module
 
-    def calculateWalls(walls, state, corner):
+    """def calculateWalls(walls, state, corner):
         sx, sy = state
         cx, cy = corner
         cont = 0
@@ -467,13 +467,13 @@ def cornersHeuristic(cur_state, problem):
                 if i == True:
                     cont+=3
 
-        return cont
+        return cont"""
             
 
 
 
     corners = problem.corners  # These are the corner coordinates
-    walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
+    #walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
     # cur_state = state, list of corners
 
@@ -493,7 +493,7 @@ def cornersHeuristic(cur_state, problem):
     visited_corners = cur_state[1]
 
     not_visited_corners = list()
-    self_to_corners = list()
+    """self_to_corners = list()
     corners_to_corners = list()
 
     paths = list()
@@ -501,18 +501,29 @@ def cornersHeuristic(cur_state, problem):
 
     combinations = list()
 
-    j=0
+    j=0"""
     for i in corners:
         if i not in visited_corners:
             not_visited_corners.append(i)
 
+    if len(not_visited_corners) == 0:
+        return 0
 
-    perm = list(itertools.permutations(not_visited_corners))
+    perms = list(itertools.permutations(not_visited_corners))
 
+    min_distance = 999999
+    for permutation in perms:
+        state = cur_state[0]
+        current_distance = 0
+        for corner in permutation:
+            current_distance += util.manhattanDistance(state, corner)
+            state = corner
+        if min_distance > current_distance:
+            min_distance = current_distance
 
-    
+    return min_distance
 
-    for i in range(len(perm)):
+    """ for i in range(len(perm)):
         combinations.append(list())
         combinations[i].append(state)
         for j in perm:
@@ -532,11 +543,10 @@ def cornersHeuristic(cur_state, problem):
         for i in range(len(paths)):
             cost+=paths[i]
            
-    cost = cost/len(paths)
+    cost = cost/len(paths)"""
     # -------------------------------------------------------------------------
 
     
-    return cost
 
     
 
