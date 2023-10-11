@@ -28,10 +28,9 @@ that say
 
 "*** YOUR CODE HERE ***"
 
-Name student 1: ...
-Name student 2: ...
-IA lab group and pair: gggg - mm
-
+Name student 1: Sergio Hidalgo Gamborino
+Name student 2: Alexis Canales Molina
+IA lab group and pair: 1331 - 11
 
 The parts you fill in start about 3/4 of the way down.  Follow the project
 description for details.
@@ -430,85 +429,32 @@ def cornersHeuristic(cur_state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    import math
     import itertools
-
-    def calculateDistance(vectorA, vectorB):
-        Ax, Ay = vectorA
-        Bx, By = vectorB
-
-        if Ax == Bx:
-            return Ay
-        if Ay == By:
-            return Ax
-
-        vectorAB = (Ax-Bx, Ay-By)
-        
-        ABx, ABy = vectorAB
-
-        module = math.sqrt(ABx**2 + ABy**2)
-
-        if Ax != Bx and Ay != By:
-            return module *2
-
-        return module
-
-    """def calculateWalls(walls, state, corner):
-        sx, sy = state
-        cx, cy = corner
-        cont = 0
-
-        if sx == cx:
-            for i in walls[sx]:
-                if i == True:
-                    cont+=3
-        elif sy == cy:
-            for i in walls[sy]:
-                if i == True:
-                    cont+=3
-
-        return cont"""
-            
 
 
 
     corners = problem.corners  # These are the corner coordinates
-    #walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
-    # cur_state = state, list of corners
-
-    # for each wall it will be consider as 3 of cost
-    # as is the minimum needed to avoid it
-    # one down one to the direction, one up
-    # Example:
-    #  ____   _____
-    #  __  |_|  ___
-    #    |_____|
-
-    # so the relaxed problem will be consider as 
-    # a straight line to the corner and for each wall
-    # it will add 3 of cost
+    # the relaxed problem will be consider as 
+    # te manhattan distance between points
     
+    # base state (the position)
     state = cur_state[0]
+    # the list of visited corners
     visited_corners = cur_state[1]
-
+    # the list of not visited corners
     not_visited_corners = list()
-    """self_to_corners = list()
-    corners_to_corners = list()
-
-    paths = list()
-    cost = 0
-
-    combinations = list()
-
-    j=0"""
     for i in corners:
         if i not in visited_corners:
+            # each corner not in visited corners
             not_visited_corners.append(i)
 
+    # if all corners are visited
     if len(not_visited_corners) == 0:
+        # return 0
         return 0
 
+    # permutations of all combination of corners
     perms = list(itertools.permutations(not_visited_corners))
 
     min_distance = 999999
@@ -516,37 +462,17 @@ def cornersHeuristic(cur_state, problem):
         state = cur_state[0]
         current_distance = 0
         for corner in permutation:
+            # distance between state and corner
             current_distance += util.manhattanDistance(state, corner)
+            # the next state will become the actual corner
             state = corner
+        # if the current distance is les than the min distance
         if min_distance > current_distance:
+            # it will become the min_distance
             min_distance = current_distance
 
     return min_distance
 
-    """ for i in range(len(perm)):
-        combinations.append(list())
-        combinations[i].append(state)
-        for j in perm:
-            combinations[i].append(j)
-
-    for i in range(len(perm)):
-        paths.append(0)
-        for j in range(len(perm[i])-1):
-            if j==0:
-                paths[i]+= int(util.manhattanDistance(state, perm[i][j]))
-                                
-            paths[i]+= int(util.manhattanDistance(perm[i][j], perm[i][j+1]))
-
-     
-    cost = 0            
-    if len(paths) != 0:
-        for i in range(len(paths)):
-            cost+=paths[i]
-           
-    cost = cost/len(paths)"""
-    # -------------------------------------------------------------------------
-
-    
 
     
 
