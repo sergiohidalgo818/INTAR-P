@@ -462,7 +462,7 @@ def cornersHeuristic(cur_state, problem):
         state = cur_state[0]
         current_distance = 0
         for corner in permutation:
-            # distance between state and corner
+            # distance between state and corner (in the actual permutation)
             current_distance += util.manhattanDistance(state, corner)
             # the next state will become the actual corner
             state = corner
