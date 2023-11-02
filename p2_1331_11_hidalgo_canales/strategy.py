@@ -332,11 +332,9 @@ class MinimaxAlphaBetaStrategy(Strategy):
                     depth - 1,
                     alpha,
                     beta
-
                 )
 
                
-
                 # if the succesor minimax is greater than actual minimax value
                 if (successor_minimax_value > minimax_value):
                     # it becomes the minimax value

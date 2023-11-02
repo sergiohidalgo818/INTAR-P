@@ -6,6 +6,7 @@ Authors:
 """
 
 from __future__ import annotations  # For Python 3.7
+from p2_1331_11_hidalgo_canales import Solution1
 
 import numpy as np
 
@@ -99,7 +100,7 @@ def create_match(player1: Player, player2: Player) -> TwoPlayerMatch:
 
 tour = Tournament(max_depth=3, init_match=create_match)
 # if the strategies are copy-pasted here:
-strats = {'opt1': [Heuristic1], 'opt2': [Heuristic2], 'opt3': [Heuristic3]}
+strats = {'opt1': [Heuristic1], 'opt2': [Heuristic2], 'opt3': [Heuristic3], 'opt4' : [Solution1]}
 # if the strategies should be loaded from files in a specific folder:
 # folder_name = "folder_strat" # name of the folder where the strategy files are located
 # strats = tour.load_strategies_from_folder(folder=folder_name, max_strat=3)
