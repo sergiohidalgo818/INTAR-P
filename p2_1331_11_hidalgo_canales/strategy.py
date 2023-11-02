@@ -100,7 +100,7 @@ class MinimaxStrategy(Strategy):
         gui: bool = False,
     ) -> TwoPlayerGameState:
         """Compute the next state in the game."""
-
+        
         minimax_value, minimax_successor = self._max_value(
             state,
             self.max_depth_minimax,
@@ -213,13 +213,13 @@ class MinimaxAlphaBetaStrategy(Strategy):
         alpha = -np.inf
         beta = np.inf
 
-        
+        # checks who is the next player
         if state.is_player_max(state.next_player):
             fun = self._max_value
         else:
             fun = self._min_value
 
-        
+        # execute the player that corresponds
         minimax_value, minimax_successor, alpha, beta = fun(
                 state,
                 self.max_depth_minimax,
@@ -255,8 +255,6 @@ class MinimaxAlphaBetaStrategy(Strategy):
             minimax_successor = None
         else:
             minimax_value = np.inf
-            alpha = -np.inf
-            beta = np.inf
 
             for successor in self.generate_successors(state):
                 if self.verbose > 1:
@@ -269,7 +267,7 @@ class MinimaxAlphaBetaStrategy(Strategy):
                     )
 
 
-                
+                # pass alpha, beta and the succesor to max fun
                 successor_minimax_value, _, alphax, betax = self._max_value(
                     successor,
                     depth - 1,
@@ -278,14 +276,19 @@ class MinimaxAlphaBetaStrategy(Strategy):
                 )
 
 
+                # if the succesor minimax is smaller than actual minimax value
                 if (successor_minimax_value < minimax_value):
+                    # it becomes the minimax value
                     minimax_value = successor_minimax_value
                     minimax_successor = successor
-                
+
+                    # and if minimax value is smaller than beta
                     if (minimax_value < beta):
+                        # beta becomes the minimax value
                         beta = minimax_value
-                
-                if alpha <= beta:
+              
+                # if alpha >= beta, prune                
+                if alpha >= beta:
                     return minimax_value, minimax_successor, alpha, beta
 
         if self.verbose > 1:
@@ -313,8 +316,6 @@ class MinimaxAlphaBetaStrategy(Strategy):
             minimax_successor = None
         else:
             minimax_value = -np.inf
-            alpha = -np.inf
-            beta = np.inf
             for successor in self.generate_successors(state):
                 if self.verbose > 1:
                     print('{}: {}'.format(state.board, minimax_value))
@@ -334,13 +335,20 @@ class MinimaxAlphaBetaStrategy(Strategy):
 
                 )
 
+               
+
+                # if the succesor minimax is greater than actual minimax value
                 if (successor_minimax_value > minimax_value):
+                    # it becomes the minimax value
                     minimax_value = successor_minimax_value
                     minimax_successor = successor
     
+                    # and if minimax value is greater than alpha
                     if (minimax_value > alpha):
+                        # beta becomes the minimax value
                         alpha = minimax_value
 
+                # if alpha >= beta, prune                
                 if alpha >= beta:
                     return minimax_value, minimax_successor, alpha, beta
 
