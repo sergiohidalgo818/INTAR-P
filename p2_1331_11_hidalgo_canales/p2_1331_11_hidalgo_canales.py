@@ -66,9 +66,11 @@ class Solution1(StudentHeuristic):
           taux = (j, t[1])
           if taux in keys and state.board[taux] != token:
             listx.append(t[0])
-            contx+=1
+            conty+=1
 
-      totals.append(contx+conty)
+
+      totals.append(contx)
+      totals.append(conty)
     totals.sort(reverse=True)
     return totals
   
@@ -87,14 +89,13 @@ class Solution1(StudentHeuristic):
 
 
     # number of tokens he can eat - number of tokens we can eat
-    countx=0
     keys = state.board.keys()
 
     t1 = self.get_max_tokens(state, token, keys)
     t2 = self.get_max_tokens(state, nottoken, keys)
 
     
-    res =  t2[1] - t1[0]
+    res =  t2[0] - t1[0]
     
     
     return res

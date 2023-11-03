@@ -1,9 +1,13 @@
 """Strategies for two player games.
 
-   Authors:
+    Authors:
         Fabiano Baroni <fabiano.baroni@uam.es>,
         Alejandro Bellogin Kouki <alejandro.bellogin@uam.es>
         Alberto Suárez <alberto.suarez@uam.es>
+
+    Students:
+        Sergio Hidalgo Gamborino <sergio.hidalgo@estudiante.uam.es>
+        Alexis Cales Molina
 """
 
 from __future__ import annotations  # For Python 3.7
@@ -195,19 +199,6 @@ class MinimaxAlphaBetaStrategy(Strategy):
         state: TwoPlayerGameState,
         gui: bool = False,
     ) -> TwoPlayerGameState:
-        """Compute the next state in the game."""
-
-        """
-        # Use this code snippet to trace the execution of the algorithm
-
-                 if self.verbose > 1:
-                    print('{}: [{:.2g}, {:.2g}]'.format(
-                            state.board,
-                            alpha,
-                            beta,
-                        )
-                    )
-        """
 
         """Compute the next state in the game."""
         alpha = -np.inf
