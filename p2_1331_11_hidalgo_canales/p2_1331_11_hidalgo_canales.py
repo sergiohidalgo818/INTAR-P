@@ -3,6 +3,7 @@ import numpy as np
 from typing import Sequence
 
 from reversi import from_dictionary_to_array_board
+
 from game import (
     TwoPlayerGameState,
 )
@@ -97,6 +98,43 @@ class Solution1(StudentHeuristic):
     
     res =  t2[0] - t1[0]
     
+    
+    return res
+  
+class Solution2(StudentHeuristic):
+  def get_name(self) -> str:
+    return "Thanker Nombert2"
+  
+  def get_max_tokens(self, state:TwoPlayerGameState, token):
+
+    board = from_dictionary_to_array_board(state.board, state.game.height, state.game.width)
+
+    count = 0
+
+    for row in board:
+      for square in row:
+        if square == token:
+          count += 1
+
+    return count
+  
+  def evaluation_function(self, state: TwoPlayerGameState) -> float:
+    # player 1 B player 2 W
+    if state.is_player_max(state.player1):
+      token = 'B'
+      nottoken = 'W'
+    elif state.is_player_max(state.player2):
+      token = 'W'
+      nottoken = 'B'
+    else:
+      raise ValueError('Player MAX not defined')
+    
+    # number of tokens max has - number of tokens min has
+
+    max_tokens = self.get_max_tokens(state, token)
+    min_tokens = self.get_max_tokens(state, nottoken)
+
+    res =  max_tokens - min_tokens
     
     return res
 
