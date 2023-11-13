@@ -72,13 +72,13 @@ class Solution1(StudentHeuristic):
                     if taux in keys and state.board[taux] != token:
                         listx.append(t[0])
                         if t[0] == 1 or t[0] == h:
-                            multx *= 2
+                            multx *= 1.5
 
                         if j == 1 or j == w:
-                            multx *= 2
+                            multx *= 1.5
 
                         if t[0] == mid[0] and j == mid[1]:
-                            multx *= 2
+                            multx *= 1.5
 
                         contx += (1*multx)
 
@@ -88,13 +88,13 @@ class Solution1(StudentHeuristic):
                     if taux in keys and state.board[taux] != token:
                         listy.append(t[1])
                         if t[1] == 1 or t[1] == w:
-                            multy *= 2
+                            multy *= 1.5
 
                         if j == 1 or j == h:
-                            multy *= 2
+                            multy *= 1.5
 
                         if t[1] == mid[1] and j == mid[0]:
-                            multy *= 2
+                            multy *= 1.5
 
                         conty += (1*multy)
 
@@ -113,13 +113,13 @@ class Solution1(StudentHeuristic):
                         listz.append(taux)
 
                         if y == 1 or y == w:
-                            multz *= 2
+                            multz *= 1.5
 
                         if x == 1 or x == h:
-                            multz *= 2
+                            multz *= 1.5
 
                         if y == mid[1] and x == mid[0]:
-                            multz *= 2
+                            multz *= 1.5
 
                         contz += (1*multz)
 
@@ -134,13 +134,13 @@ class Solution1(StudentHeuristic):
                     if taux in keys and state.board[taux] != token:
                         listz.append(taux)
                         if y == 1 or y == w:
-                            multz *= 2
+                            multz *= 1.5
 
                         if x == 1 or x == h:
-                            multz *= 2
+                            multz *= 1.5
 
                         if y == mid[1] and x == mid[0]:
-                            multz *= 2
+                            multz *= 1.5
 
                         contz += (1*multz)
 
