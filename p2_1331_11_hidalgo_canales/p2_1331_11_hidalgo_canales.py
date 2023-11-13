@@ -43,6 +43,9 @@ class Solution1(StudentHeuristic):
         return "Thanker Nombert1"
 
     def get_max_tokens(self, state: TwoPlayerGameState, token, keys):
+        '''
+        This function get a list with the max of tokens on board
+        '''
         totals = list()
         listx = list()
         listx.append(0)
@@ -51,10 +54,12 @@ class Solution1(StudentHeuristic):
         listz = list()
         listz.append((0, 0))
 
+        # size of board
         h = state.game.height
         w = state.game.width
 
-        mid = (h/2, w/2)
+        # center of board
+        mid = (int(h/2), int(w/2))
 
         for i in state.board:
             contx = 0
@@ -66,38 +71,52 @@ class Solution1(StudentHeuristic):
 
             t = tuple(i)
 
+            # counts number of horizontal tokens from diferent token
             if t[0] not in listx:
                 for j in range(t[1], w):
                     taux = (t[0], j)
                     if taux in keys and state.board[taux] != token:
                         listx.append(t[0])
+
+                        # if its on corner less points
                         if t[0] == 1 or t[0] == h:
-                            multx *= 1.5
-
+                            multx *= 0.5
                         if j == 1 or j == w:
-                            multx *= 1.5
-
-                        if t[0] == mid[0] and j == mid[1]:
-                            multx *= 1.5
+                            multx *= 0.5
+                        # if its on center more points
+                        contaux = 0
+                        for i in range(mid[0]):
+                            if ((t[0] == mid[0]+contaux and j == mid[1]+contaux) or 
+                            (t[0] == mid[0]+contaux and j == mid[1]) or
+                            (t[0] == mid[0] and j == mid[1]+contaux)):
+                                multx *= 1.5
+                            contaux+=1
 
                         contx += (1*multx)
-
+            
+            # same but vertically
             if t[1] not in listy:
                 for j in range(t[1], h):
                     taux = (j, t[1])
                     if taux in keys and state.board[taux] != token:
                         listy.append(t[1])
                         if t[1] == 1 or t[1] == w:
-                            multy *= 1.5
+                            multy *= 0.5
 
                         if j == 1 or j == h:
-                            multy *= 1.5
+                            multy *= 0.5
 
-                        if t[1] == mid[1] and j == mid[0]:
-                            multy *= 1.5
+                        contaux = 0
+                        for i in range(mid[0]):
+                            if ((t[0] == mid[0]+contaux and j == mid[1]+contaux) or 
+                            (t[0] == mid[0]+contaux and j == mid[1]) or
+                            (t[0] == mid[0] and j == mid[1]+contaux)):
+                                multy *= 1.5
+                            contaux+=1
 
                         conty += (1*multy)
 
+            # checks diagonal sum
             if t not in listz:
                 x = 0
                 y = 0
@@ -113,13 +132,18 @@ class Solution1(StudentHeuristic):
                         listz.append(taux)
 
                         if y == 1 or y == w:
-                            multz *= 1.5
+                            multz *= 0.5
 
                         if x == 1 or x == h:
-                            multz *= 1.5
-
-                        if y == mid[1] and x == mid[0]:
-                            multz *= 1.5
+                            multz *= 0.5
+                        
+                        contaux = 0
+                        for i in range(mid[0]):
+                            if ((t[0] == mid[0]+contaux and j == mid[1]+contaux) or 
+                            (t[0] == mid[0]+contaux and j == mid[1]) or
+                            (t[0] == mid[0] and j == mid[1]+contaux)):
+                                multz *= 1.5
+                            contaux+=1
 
                         contz += (1*multz)
 
@@ -134,20 +158,26 @@ class Solution1(StudentHeuristic):
                     if taux in keys and state.board[taux] != token:
                         listz.append(taux)
                         if y == 1 or y == w:
-                            multz *= 1.5
+                            multz *= 0.5
 
                         if x == 1 or x == h:
-                            multz *= 1.5
+                            multz *= 0.5
 
-                        if y == mid[1] and x == mid[0]:
-                            multz *= 1.5
+                        contaux = 0
+                        for i in range(mid[0]):
+                            if ((t[0] == mid[0]+contaux and j == mid[1]+contaux) or 
+                            (t[0] == mid[0]+contaux and j == mid[1]) or
+                            (t[0] == mid[0] and j == mid[1]+contaux)):
+                                multz *= 1.5
+                            contaux+=1
 
                         contz += (1*multz)
 
             totals.append(contx)
             totals.append(conty)
             totals.append(contz)
-
+        
+        # sort it for the maximum of tokens
         totals.sort(reverse=True)
         return totals
 
@@ -163,13 +193,13 @@ class Solution1(StudentHeuristic):
         else:
             raise ValueError('Player MAX not defined')
 
-        # number of tokens he can eat - number of tokens we can eat
         keys = state.board.keys()
 
         t1 = self.get_max_tokens(state, token, keys)
         t2 = self.get_max_tokens(state, nottoken, keys)
 
-        res = t2[0] - t1[0]
+        # max number of tokens we can eat - max number of tokens he can eat
+        res = t1[0] - t2[0]
 
         return res
 
