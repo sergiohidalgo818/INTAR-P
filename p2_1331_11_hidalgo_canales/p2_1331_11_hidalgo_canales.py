@@ -411,6 +411,8 @@ class Solution3(StudentHeuristic):
         return count
 
     def evaluation_function(self, state: TwoPlayerGameState) -> float:
+        if state.end_of_game:
+            return 9999
         # player 1 B player 2 W
         if state.is_player_max(state.player1):
             token = 'B'
