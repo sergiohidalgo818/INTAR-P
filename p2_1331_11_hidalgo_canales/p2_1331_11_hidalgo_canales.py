@@ -33,324 +33,399 @@ def simple_evaluation_function(state: TwoPlayerGameState) -> float:
 
     return state_value
 
+
 def func_glob(n: int, state: TwoPlayerGameState) -> float:
-  return n + simple_evaluation_function(state)
+    return n + simple_evaluation_function(state)
+
 
 class Solution1(StudentHeuristic):
-  def get_name(self) -> str:
-    return "Thanker Nombert1"
-  
-  def get_max_tokens(self, state:TwoPlayerGameState, token, keys):
-    totals = list()
-    listx = list()
-    listx.append(0)
-    listy = list()
-    listy.append(0)
+    def get_name(self) -> str:
+        return "Thanker Nombert1"
 
-    h = state.game.height
-    w = state.game.width
+    def get_max_tokens(self, state: TwoPlayerGameState, token, keys):
+        totals = list()
+        listx = list()
+        listx.append(0)
+        listy = list()
+        listy.append(0)
+        listz = list()
+        listz.append((0, 0))
 
-    for i in state.board:
-      contx =0
-      conty =0
-      t = tuple(i)
+        h = state.game.height
+        w = state.game.width
 
-      if t[0] not in listx:
-        for j in range(t[1], w):
-          taux = (t[0], j)
-          if taux in keys and state.board[taux] != token:
-            listx.append(t[0])
-            contx+=1
+        mid = (h/2, w/2)
 
-      if t[1] not in listy:
-        for j in range(t[0], h):
-          taux = (j, t[1])
-          if taux in keys and state.board[taux] != token:
-            listx.append(t[0])
-            conty+=1
+        for i in state.board:
+            contx = 0
+            multx = 1
+            conty = 0
+            multy = 1
+            contz = 0
+            multz = 1
+
+            t = tuple(i)
+
+            if t[0] not in listx:
+                for j in range(t[1], w):
+                    taux = (t[0], j)
+                    if taux in keys and state.board[taux] != token:
+                        listx.append(t[0])
+                        if t[0] == 1 or t[0] == h:
+                            multx *= 2
+
+                        if j == 1 or j == w:
+                            multx *= 2
+
+                        if t[0] == mid[0] and j == mid[1]:
+                            multx *= 2
+
+                        contx += (1*multx)
+
+            if t[1] not in listy:
+                for j in range(t[1], h):
+                    taux = (j, t[1])
+                    if taux in keys and state.board[taux] != token:
+                        listy.append(t[1])
+                        if t[1] == 1 or t[1] == w:
+                            multy *= 2
+
+                        if j == 1 or j == h:
+                            multy *= 2
+
+                        if t[1] == mid[1] and j == mid[0]:
+                            multy *= 2
+
+                        conty += (1*multy)
+
+            if t not in listz:
+                x = 0
+                y = 0
+                x = t[0]
+                y = t[1]
+
+                while x > 1 and x <= h and y > 1 and y <= w:
+                    x -= 1
+                    y -= 1
+                    taux = (x, y)
+
+                    if taux in keys and state.board[taux] != token:
+                        listz.append(taux)
+
+                        if y == 1 or y == w:
+                            multz *= 2
+
+                        if x == 1 or x == h:
+                            multz *= 2
+
+                        if y == mid[1] and x == mid[0]:
+                            multz *= 2
+
+                        contz += (1*multz)
+
+                x = 0
+                y = 0
+                x = t[0]
+                y = t[1]
+                while x > 1 and x <= h and y > 1 and y <= w:
+                    x += 1
+                    y += 1
+                    taux = (x, y)
+                    if taux in keys and state.board[taux] != token:
+                        listz.append(taux)
+                        if y == 1 or y == w:
+                            multz *= 2
+
+                        if x == 1 or x == h:
+                            multz *= 2
+
+                        if y == mid[1] and x == mid[0]:
+                            multz *= 2
+
+                        contz += (1*multz)
+
+            totals.append(contx)
+            totals.append(conty)
+            totals.append(contz)
+
+        totals.sort(reverse=True)
+        return totals
+
+    def evaluation_function(self, state: TwoPlayerGameState) -> float:
+        aux = 1
+        # player 1 B player 2 W
+        if state.is_player_max(state.player1):
+            token = 'B'
+            nottoken = 'W'
+        elif state.is_player_max(state.player2):
+            token = 'W'
+            nottoken = 'B'
+        else:
+            raise ValueError('Player MAX not defined')
+
+        # number of tokens he can eat - number of tokens we can eat
+        keys = state.board.keys()
+
+        t1 = self.get_max_tokens(state, token, keys)
+        t2 = self.get_max_tokens(state, nottoken, keys)
+
+        res = t2[0] - t1[0]
+
+        return res
 
 
-      totals.append(contx)
-      totals.append(conty)
-    totals.sort(reverse=True)
-    return totals
-  
-  def evaluation_function(self, state: TwoPlayerGameState) -> float:
-    aux = 1
-    # player 1 B player 2 W
-    if state.is_player_max(state.player1):
-      token = 'B'
-      nottoken = 'W'
-    elif state.is_player_max(state.player2):
-      token = 'W'
-      nottoken = 'B'
-    else:
-      raise ValueError('Player MAX not defined')
-    
-
-
-    # number of tokens he can eat - number of tokens we can eat
-    keys = state.board.keys()
-
-    t1 = self.get_max_tokens(state, token, keys)
-    t2 = self.get_max_tokens(state, nottoken, keys)
-
-    
-    res =  t2[0] - t1[0]
-    
-    
-    return res
-  
 class Solution2(StudentHeuristic):
-  def get_name(self) -> str:
-    return "Thanker Nombert2"
-  
-  def get_max_tokens(self, state:TwoPlayerGameState, token):
+    def get_name(self) -> str:
+        return "Thanker Nombert2"
 
-    board = from_dictionary_to_array_board(state.board, state.game.height, state.game.width)
+    def get_max_tokens(self, state: TwoPlayerGameState, token):
 
-    count = 0
+        board = from_dictionary_to_array_board(
+            state.board, state.game.height, state.game.width)
 
-    for row in board:
-      for square in row:
-        if square == token:
-          count += 1
+        count = 0
 
-    return count
-  
-  def evaluation_function(self, state: TwoPlayerGameState) -> float:
-    # player 1 B player 2 W
-    if state.is_player_max(state.player1):
-      token = 'B'
-      nottoken = 'W'
-    elif state.is_player_max(state.player2):
-      token = 'W'
-      nottoken = 'B'
-    else:
-      raise ValueError('Player MAX not defined')
-    
-    # number of tokens max has - number of tokens min has
+        for row in board:
+            for square in row:
+                if square == token:
+                    count += 1
 
-    max_tokens = self.get_max_tokens(state, token)
-    min_tokens = self.get_max_tokens(state, nottoken)
+        return count
 
-    res =  max_tokens - min_tokens
-    
-    return res
-  
+    def evaluation_function(self, state: TwoPlayerGameState) -> float:
+        # player 1 B player 2 W
+        if state.is_player_max(state.player1):
+            token = 'B'
+            nottoken = 'W'
+        elif state.is_player_max(state.player2):
+            token = 'W'
+            nottoken = 'B'
+        else:
+            raise ValueError('Player MAX not defined')
+
+        # number of tokens max has - number of tokens min has
+
+        max_tokens = self.get_max_tokens(state, token)
+        min_tokens = self.get_max_tokens(state, nottoken)
+
+        res = max_tokens - min_tokens
+
+        return res
+
+
 class Solution3(StudentHeuristic):
-  def get_name(self) -> str:
-    return "Thanker Nombert3"
-  
-  def get_max_tokens(self, state:TwoPlayerGameState, token, nottoken):
+    def get_name(self) -> str:
+        return "Thanker Nombert3"
 
-    board = from_dictionary_to_array_board(state.board, state.game.height, state.game.width)
+    def get_max_tokens(self, state: TwoPlayerGameState, token, nottoken):
 
-    count = 0
+        board = from_dictionary_to_array_board(
+            state.board, state.game.height, state.game.width)
 
-    for idx, row in enumerate(board):
-      for idy, square in enumerate(row):
-        if square == token:
+        count = 0
 
-          if (idx == 0 and idy == 0):
-            for index, aux_row in enumerate(reversed(board)):
-              aux_count = 0
-              if aux_row[0] == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_row[0] == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(board) - index) + aux_count))
-                break
-            for index, aux_square in enumerate(reversed(row)):
-              aux_count = 0
-              if aux_square == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_square == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(row) - index) + aux_count))
-                break
-            for index, aux_row in reversed(list(enumerate(board))):
-              aux_count = 0
-              if aux_row[index] == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_row[index] == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(board) - index) + aux_count))
-                break
-            count -= 4
+        for idx, row in enumerate(board):
+            for idy, square in enumerate(row):
+                if square == token:
 
-          elif (idx == 0 and idy == (len(row)-1)):
-            for index, aux_row in enumerate(reversed(board)):
-              aux_count = 0
-              if aux_row[len(row)-1] == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_row[len(row)-1] == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(board) - index) + aux_count))
-                break
-            for index, aux_square in enumerate(row):
-              aux_count = 0
-              if aux_square == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_square == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(row) - index) + aux_count))
-                break
-            for index, aux_row in enumerate(reversed(board)):
-              aux_count = 0
-              if aux_row[index] == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_row[index] == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(board) - index) + aux_count))
-                break
-            count -= 4
+                    if (idx == 0 and idy == 0):
+                        for index, aux_row in enumerate(reversed(board)):
+                            aux_count = 0
+                            if aux_row[0] == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_row[0] == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(board) - index) + aux_count))
+                                break
+                        for index, aux_square in enumerate(reversed(row)):
+                            aux_count = 0
+                            if aux_square == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_square == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(row) - index) + aux_count))
+                                break
+                        for index, aux_row in reversed(list(enumerate(board))):
+                            aux_count = 0
+                            if aux_row[index] == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_row[index] == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(board) - index) + aux_count))
+                                break
+                        count -= 4
 
-          elif (idx == (len(board)-1) and idy == 0):
-            for index, aux_row in enumerate(board):
-              aux_count = 0
-              if aux_row[0] == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_row[0] == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(board) - index) + aux_count))
-                break
-            for index, aux_square in enumerate(reversed(row)):
-              aux_count = 0
-              if aux_square == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_square == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(row) - index) + aux_count))
-                break
-            for index, aux_row in enumerate(board):
-              aux_count = 0
-              if aux_row[len(aux_row) - (index+1)] == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_row[len(aux_row) - (index+1)] == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(board) - index) + aux_count))
-                break
-            count -= 4
+                    elif (idx == 0 and idy == (len(row)-1)):
+                        for index, aux_row in enumerate(reversed(board)):
+                            aux_count = 0
+                            if aux_row[len(row)-1] == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_row[len(row)-1] == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(board) - index) + aux_count))
+                                break
+                        for index, aux_square in enumerate(row):
+                            aux_count = 0
+                            if aux_square == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_square == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(row) - index) + aux_count))
+                                break
+                        for index, aux_row in enumerate(reversed(board)):
+                            aux_count = 0
+                            if aux_row[index] == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_row[index] == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(board) - index) + aux_count))
+                                break
+                        count -= 4
 
-          elif (idx == (len(board)-1) and idy == (len(row)-1)):
-            for index, aux_row in enumerate(board):
-              aux_count = 0
-              if aux_row[len(row)-1] == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_row[len(row)-1] == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(board) - index) + aux_count))
-                break
-            for index, aux_square in enumerate(row):
-              aux_count = 0
-              if aux_square == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_square == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(row) - index) + aux_count))
-                break
-            for index, aux_row in enumerate(board):
-              aux_count = 0
-              if aux_row[index] == nottoken:
-                if aux_count > 0:
-                  aux_count += 1
-                continue
-              elif aux_row[index] == token:
-                aux_count += 1
-              else:
-                count += (2 * ((len(board) - index) + aux_count))
-                break
-            count -= 4
-          
-          elif (idx == 1 and idy == 0) or (idx == 0 and idy == 1) or (idx == 1 and idy == 1):
-            istoken = board[0][0]
-            if istoken == token:
-              count += 3
-            elif istoken == nottoken:
-              count += 2
-            else:
-              count += 1
-          elif (idx == 1 and idy == (len(row)-1)) or (idx == 0 and idy == (len(row)-2)) or (idx == 1 and idy == (len(row)-2)):
-            istoken = board[0][(len(row)-1)]
-            if istoken == token:
-              count += 3
-            elif istoken == nottoken:
-              count += 2
-            else:
-              count += 1
-          elif (idx == (len(board)-2) and idy == 0) or (idx == (len(board)-1) and idy == 1) or (idx == (len(board)-2) and idy == 1):
-            istoken = board[(len(board)-1)][0]
-            if istoken == token:
-              count += 3
-            elif istoken == nottoken:
-              count += 2
-            else:
-              count += 1
-          elif (idx == (len(board)-2) and idy == (len(row)-1)) or (idx == (len(board)-1) and idy == (len(row)-2)) or (idx == (len(board)-2) and idy == (len(row)-2)):
-            istoken = board[(len(board)-1)][(len(row)-1)]
-            if istoken == token:
-              count += 3
-            elif istoken == nottoken:
-              count += 2
-            else:
-              count += 1
-          
-          else:
-            count += 2
-            
+                    elif (idx == (len(board)-1) and idy == 0):
+                        for index, aux_row in enumerate(board):
+                            aux_count = 0
+                            if aux_row[0] == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_row[0] == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(board) - index) + aux_count))
+                                break
+                        for index, aux_square in enumerate(reversed(row)):
+                            aux_count = 0
+                            if aux_square == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_square == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(row) - index) + aux_count))
+                                break
+                        for index, aux_row in enumerate(board):
+                            aux_count = 0
+                            if aux_row[len(aux_row) - (index+1)] == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_row[len(aux_row) - (index+1)] == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(board) - index) + aux_count))
+                                break
+                        count -= 4
 
-    return count
-  
-  def evaluation_function(self, state: TwoPlayerGameState) -> float:
-    # player 1 B player 2 W
-    if state.is_player_max(state.player1):
-      token = 'B'
-      nottoken = 'W'
-    elif state.is_player_max(state.player2):
-      token = 'W'
-      nottoken = 'B'
-    else:
-      raise ValueError('Player MAX not defined')
-    
-    # number of tokens max has - number of tokens min has
+                    elif (idx == (len(board)-1) and idy == (len(row)-1)):
+                        for index, aux_row in enumerate(board):
+                            aux_count = 0
+                            if aux_row[len(row)-1] == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_row[len(row)-1] == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(board) - index) + aux_count))
+                                break
+                        for index, aux_square in enumerate(row):
+                            aux_count = 0
+                            if aux_square == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_square == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(row) - index) + aux_count))
+                                break
+                        for index, aux_row in enumerate(board):
+                            aux_count = 0
+                            if aux_row[index] == nottoken:
+                                if aux_count > 0:
+                                    aux_count += 1
+                                continue
+                            elif aux_row[index] == token:
+                                aux_count += 1
+                            else:
+                                count += (2 * ((len(board) - index) + aux_count))
+                                break
+                        count -= 4
 
-    max_tokens = self.get_max_tokens(state, token, nottoken)
-    min_tokens = self.get_max_tokens(state, nottoken, token)
+                    elif (idx == 1 and idy == 0) or (idx == 0 and idy == 1) or (idx == 1 and idy == 1):
+                        istoken = board[0][0]
+                        if istoken == token:
+                            count += 3
+                        elif istoken == nottoken:
+                            count += 2
+                        else:
+                            count += 1
+                    elif (idx == 1 and idy == (len(row)-1)) or (idx == 0 and idy == (len(row)-2)) or (idx == 1 and idy == (len(row)-2)):
+                        istoken = board[0][(len(row)-1)]
+                        if istoken == token:
+                            count += 3
+                        elif istoken == nottoken:
+                            count += 2
+                        else:
+                            count += 1
+                    elif (idx == (len(board)-2) and idy == 0) or (idx == (len(board)-1) and idy == 1) or (idx == (len(board)-2) and idy == 1):
+                        istoken = board[(len(board)-1)][0]
+                        if istoken == token:
+                            count += 3
+                        elif istoken == nottoken:
+                            count += 2
+                        else:
+                            count += 1
+                    elif (idx == (len(board)-2) and idy == (len(row)-1)) or (idx == (len(board)-1) and idy == (len(row)-2)) or (idx == (len(board)-2) and idy == (len(row)-2)):
+                        istoken = board[(len(board)-1)][(len(row)-1)]
+                        if istoken == token:
+                            count += 3
+                        elif istoken == nottoken:
+                            count += 2
+                        else:
+                            count += 1
 
-    res =  max_tokens - min_tokens
-    
-    return res
+                    else:
+                        count += 2
+
+        return count
+
+    def evaluation_function(self, state: TwoPlayerGameState) -> float:
+        # player 1 B player 2 W
+        if state.is_player_max(state.player1):
+            token = 'B'
+            nottoken = 'W'
+        elif state.is_player_max(state.player2):
+            token = 'W'
+            nottoken = 'B'
+        else:
+            raise ValueError('Player MAX not defined')
+
+        # number of tokens max has - number of tokens min has
+
+        max_tokens = self.get_max_tokens(state, token, nottoken)
+        min_tokens = self.get_max_tokens(state, nottoken, token)
+
+        res = max_tokens - min_tokens
+
+        return res
