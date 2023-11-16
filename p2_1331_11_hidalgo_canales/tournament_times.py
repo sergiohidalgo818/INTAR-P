@@ -1,8 +1,9 @@
-"""Illustration of tournament.
+"""Illustration of tournament but saves times from execution (with timeit).
 
 Authors:
     Alejandro Bellogin <alejandro.bellogin@uam.es>
-
+Modified by:
+        Sergio Hidalgo <sergio.hidalgo@estudiante.uam.es>
 """
 
 from __future__ import annotations  # For Python 3.7
