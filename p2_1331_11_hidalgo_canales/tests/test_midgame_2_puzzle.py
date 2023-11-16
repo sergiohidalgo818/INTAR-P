@@ -11,6 +11,9 @@ from __future__ import annotations
 from typing import Sequence
 import numpy as np
 from game import Player, TwoPlayerGameState
+
+from p2_1331_11_hidalgo_canales import Solution1
+
 from heuristic import Heuristic
 from reversi import (
     Reversi,
@@ -41,7 +44,8 @@ def subtraction_heuristic(state: TwoPlayerGameState) -> float:
     return state_value
 
 def heuristic_1(state: TwoPlayerGameState) -> float:
-    return subtraction_heuristic(state)
+    h = Solution1()
+    return h.evaluation_function(state)
 
 player_minimax_1 = Player(
     name='Black',

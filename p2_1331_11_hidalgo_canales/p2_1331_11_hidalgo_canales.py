@@ -199,8 +199,7 @@ class Solution1(StudentHeuristic):
         t2 = self.get_max_tokens(state, nottoken, keys)
 
         # max number of tokens we can eat - max number of tokens he can eat
-        res = t1[0] - t2[0]
-
+        res = t1[0]
         return res
 
 
