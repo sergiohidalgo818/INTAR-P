@@ -75,22 +75,22 @@ class Solution1(StudentHeuristic):
             if t[0] not in listx:
                 for j in range(t[1], w):
                     taux = (t[0], j)
-                    if taux in keys and state.board[taux] != token:
+                    if taux in keys and state.board[taux] == token:
                         listx.append(t[0])
 
-                        # if its on corner less points
-                        if t[0] == 1 or t[0] == h:
-                            multx *= 0.5
-                        if j == 1 or j == w:
-                            multx *= 0.5
-                        # if its on center more points
-                        contaux = 0
-                        for i in range(mid[0]):
-                            if ((t[0] == mid[0]+contaux and j == mid[1]+contaux) or 
-                            (t[0] == mid[0]+contaux and j == mid[1]) or
-                            (t[0] == mid[0] and j == mid[1]+contaux)):
-                                multx *= 1.5
-                            contaux+=1
+                        # if its on corner more points
+                        if t[0] == 1 and t[1] == h or t[1] == 1 and t[0] == h:
+                            multx *= 1.5
+                        if t[0] == 1 and t[1] == w or t[1] == 1 and t[0] == w:
+                            multx *= 1.5
+                        # if its on center less points
+                        numb = int(mid[0]/2)
+                        for i in range(numb):
+                            if ((t[0] == mid[0]+i and j == mid[1]+i) or 
+                            (t[0] == mid[0]+i and j == mid[1]) or
+                            (t[0] == mid[0] and j == mid[1]+i)):
+                                multx *= 0.5
+                            
 
                         contx += (1*multx)
             
@@ -98,21 +98,20 @@ class Solution1(StudentHeuristic):
             if t[1] not in listy:
                 for j in range(t[1], h):
                     taux = (j, t[1])
-                    if taux in keys and state.board[taux] != token:
+                    if taux in keys and state.board[taux] == token:
                         listy.append(t[1])
-                        if t[1] == 1 or t[1] == w:
-                            multy *= 0.5
+                        # if its on corner more points
+                        if t[0] == 1 and t[1] == h or t[1] == 1 and t[0] == h:
+                            multx *= 1.5
+                        if t[0] == 1 and t[1] == w or t[1] == 1 and t[0] == w:
+                            multx *= 1.5
 
-                        if j == 1 or j == h:
-                            multy *= 0.5
-
-                        contaux = 0
+                        numb = int(mid[0]/2)
                         for i in range(mid[0]):
-                            if ((t[0] == mid[0]+contaux and j == mid[1]+contaux) or 
-                            (t[0] == mid[0]+contaux and j == mid[1]) or
-                            (t[0] == mid[0] and j == mid[1]+contaux)):
-                                multy *= 1.5
-                            contaux+=1
+                            if ((t[0] == mid[0]+numb and j == mid[1]+numb) or 
+                            (t[0] == mid[0]+numb and j == mid[1]) or
+                            (t[0] == mid[0] and j == mid[1]+numb)):
+                                multy *= 0.5
 
                         conty += (1*multy)
 
@@ -123,83 +122,56 @@ class Solution1(StudentHeuristic):
                 x = t[0]
                 y = t[1]
 
-                while x > 1 and x <= h and y > 1 and y <= w:
+                while x > 1 and y > 1:
                     x -= 1
                     y -= 1
                     taux = (x, y)
 
-                    if taux in keys and state.board[taux] != token:
+        
+                while x <= h and y <= w:
+
+                    taux = (x, y)
+                    if taux in keys and state.board[taux] == token:
                         listz.append(taux)
+                          # if its on corner more points
+                        if t[0] == 1 and t[1] == h or t[1] == 1 and t[0] == h:
+                            multx *= 1.5
+                        if t[0] == 1 and t[1] == w or t[1] == 1 and t[0] == w:
+                            multx *= 1.5
 
-                        if y == 1 or y == w:
-                            multz *= 0.5
-
-                        if x == 1 or x == h:
-                            multz *= 0.5
-                        
-                        contaux = 0
+                        numb = int(mid[0]/2)
                         for i in range(mid[0]):
-                            if ((t[0] == mid[0]+contaux and j == mid[1]+contaux) or 
-                            (t[0] == mid[0]+contaux and j == mid[1]) or
-                            (t[0] == mid[0] and j == mid[1]+contaux)):
-                                multz *= 1.5
-                            contaux+=1
+                            if ((taux[0] == mid[0]+numb and j == mid[1]+numb) or 
+                            (taux[0] == mid[0]+numb and j ==  mid[1]+numb) or
+                            (taux[0] == mid[0] and j == mid[1]+numb)):
+                                multz *= 0.5
 
                         contz += (1*multz)
-
-                x = 0
-                y = 0
-                x = t[0]
-                y = t[1]
-                while x > 1 and x <= h and y > 1 and y <= w:
+                    
                     x += 1
                     y += 1
-                    taux = (x, y)
-                    if taux in keys and state.board[taux] != token:
-                        listz.append(taux)
-                        if y == 1 or y == w:
-                            multz *= 0.5
 
-                        if x == 1 or x == h:
-                            multz *= 0.5
-
-                        contaux = 0
-                        for i in range(mid[0]):
-                            if ((t[0] == mid[0]+contaux and j == mid[1]+contaux) or 
-                            (t[0] == mid[0]+contaux and j == mid[1]) or
-                            (t[0] == mid[0] and j == mid[1]+contaux)):
-                                multz *= 1.5
-                            contaux+=1
-
-                        contz += (1*multz)
-
-            totals.append(contx)
-            totals.append(conty)
-            totals.append(contz)
+            totals.append(contx + conty + contz)
         
         # sort it for the maximum of tokens
         totals.sort(reverse=True)
         return totals
 
     def evaluation_function(self, state: TwoPlayerGameState) -> float:
-        aux = 1
         # player 1 B player 2 W
         if state.is_player_max(state.player1):
             token = 'B'
-            nottoken = 'W'
         elif state.is_player_max(state.player2):
             token = 'W'
-            nottoken = 'B'
         else:
             raise ValueError('Player MAX not defined')
 
         keys = state.board.keys()
 
         t1 = self.get_max_tokens(state, token, keys)
-        t2 = self.get_max_tokens(state, nottoken, keys)
 
-        # max number of tokens we can eat - max number of tokens he can eat
-        res = t1[0]
+        # max number of tokens we have
+        res = t1[0] 
         return res
 
 
